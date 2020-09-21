@@ -11,7 +11,7 @@ In this project, your Pacman agent will find paths through his maze world, both 
 #### ..you'll edit
 || |
 |--|--|
-| search.py | Students implement depth-first, breadth-first, uniform cost, and A* search algorithms. These algorithms are used to solve navigation and traveling salesman problems in the Pacman world.
+| search.py | Implement depth-first, breadth-first, uniform cost, and A* search algorithms. These algorithms are used to solve navigation and traveling salesman problems in the Pacman world.
 searchAgents.py | This file contains all of the agents that can be selected to control Pacman.  To select an agent, use the `-p` option when running `pacman.py`.  Arguments can be passed to your agent using `-a`.  For example, to load a SearchAgent that uses depth first search (DFS), run the following command: `python pacman.py -p SearchAgent -a fn=depthFirstSearch`.
 
 #### ..that can help
