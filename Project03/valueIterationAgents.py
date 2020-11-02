@@ -64,18 +64,18 @@ class ValueIterationAgent(ValueEstimationAgent):
         "*** YOUR CODE HERE ***"
         for i in range(self.iterations):
             states = self.mdp.getStates()
-            temp_counter = util.Counter()
+            tCounter = util.Counter()
 
             for state in states:
                 maxVal = -float('inf')
 
                 for action in self.mdp.getPossibleActions(state):
-                    Q = self.computeQValueFromValues(state ,action)
-                    if Q>maxVal:
+                    Q = self.computeQValueFromValues(state, action)
+                    if Q > maxVal:
                         maxVal = Q
 
-                temp_counter[state] = maxVal if maxVal != -float('inf') else 0
-            self.values = temp_counter
+                tCounter[state] = maxVal if maxVal != -float('inf') else 0
+            self.values = tCounter
 
 
     def getValue(self, state):
@@ -91,10 +91,10 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        transitionStatesProbs = self.mdp.getTransitionStatesAndProbs(state, action)
+        transitions = self.mdp.getTransitionStatesAndProbs(state, action)
         value = 0.0
 
-        for stateProb in transitionStatesProbs:
+        for stateProb in transitions:
             value += stateProb[1] * (self.mdp.getReward(state, action, stateProb[0]) + self.discount * self.values[stateProb[0]]) 
         return value 
 
@@ -113,7 +113,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         maxvalueoveractions = -999
 
         for action in actions: 
-           value = self.computeQValueFromValues(state,action)
+           value = self.computeQValueFromValues(state, action)
 
            if value > maxvalueoveractions:
                 maxvalueoveractions = value
@@ -205,7 +205,7 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
                         if nextState in predecessors:
                             predecessors[nextState].add(state)
                         else:
-                            predecessors[nextState]={state}
+                            predecessors[nextState] = {state}
 
         pq = util.PriorityQueue()
         
@@ -244,9 +244,9 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
                 for action in self.mdp.getPossibleActions(p):
                     Q = self.computeQValueFromValues(p, action)
 
-                    if Q>maxQ:
+                    if Q > maxQ:
                         maxQ = Q
-                diff = abs(maxQ - self.values[p])
+                d = abs(maxQ - self.values[p])
                 
-                if diff>self.theta:
-                    pq.update(p, -diff)
+                if d > self.theta:
+                    pq.update(p, -d)

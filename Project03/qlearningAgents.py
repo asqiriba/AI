@@ -65,11 +65,11 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         if len(legalActions) == 0:
             return 0.0
-        maxqvalue = -999
+        maxQ = -999
         for action in legalActions:
-            if self.getQValue(state,action) > maxqvalue:
-                maxqvalue = self.getQValue(state,action)
-        return maxqvalue
+            if self.getQValue(state,action) > maxQ:
+                maxQ = self.getQValue(state, action)
+        return maxQ
 
     def computeActionFromQValues(self, state):
         """
@@ -121,7 +121,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         sample = reward + self.discount * self.computeValueFromQValues(nextState)
-        key = state,action
+        key = state, action
         self.qvalue[key] = (1.0 - self.alpha) * self.getQValue(state, action) + self.alpha * sample
 
     def getPolicy(self, state):
@@ -185,12 +185,12 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        f = self.featExtractor
-        features = f.getFeatures(state,action)
-        qvalue = 0
+        feat = self.featExtractor
+        features = feat.getFeatures(state, action)
+        qValue = 0
         for feature in features.keys():
-            qvalue += self.weights[feature] * features[feature]
-        return qvalue
+            qValue += self.weights[feature] * features[feature]
+        return qValue
 
     def update(self, state, action, nextState, reward):
         """
@@ -201,11 +201,11 @@ class ApproximateQAgent(PacmanQAgent):
         maxqnext = -999
         for act in actionsFromNextState:
             if self.getQValue(nextState,act) > maxqnext:
-                maxqnext = self.getQValue(nextState,act)
+                maxqnext = self.getQValue(nextState, act)
         if maxqnext == -999:
             maxqnext = 0
-        diff = (reward + (self.discount * maxqnext)) - self.getQValue(state,action)
-        features = self.featExtractor.getFeatures(state,action)
+        diff = (reward + (self.discount * maxqnext)) - self.getQValue(state, action)
+        features = self.featExtractor.getFeatures(state, action)
         self.qvalue[(state,action)] += self.alpha * diff 
         for feature in features.keys():
             self.weights[feature] += self.alpha * diff * features[feature]
