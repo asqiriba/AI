@@ -157,6 +157,7 @@ class DigitClassificationModel(object):
         xw1 = nn.Linear(x, self.w0)
         r1 = nn.ReLU(nn.AddBias(xw1, self.b0))
         xw2 = nn.Linear(r1, self.w1)
+        
         return nn.AddBias(xw2, self.b1)
 
     def get_loss(self, x, y):
@@ -181,15 +182,14 @@ class DigitClassificationModel(object):
         """
         "*** YOUR CODE HERE ***"
         while True:
-            for x, y in dataset.iterate_once(self.batch_size):
-                loss = self.get_loss(x,y)
+            for i, j in dataset.iterate_once(self.batch_size):
+                loss = self.get_loss(i, j)
                 grad = nn.gradients(loss, [self.w0, self.w1, self.b0, self.b1])
                 self.w0.update(grad[0], -0.005)
                 self.w1.update(grad[1], -0.005)
                 self.b0.update(grad[2], -0.005)
                 self.b1.update(grad[3], -0.005)
 
-            print(dataset.get_validation_accuracy())
             if dataset.get_validation_accuracy() >= 0.97:
                 return
 
@@ -213,7 +213,6 @@ class LanguageIDModel(object):
         "*** YOUR CODE HERE ***"
         self.dim = 5
         self.batch_size = 2
-
         self.hiddendim = 400
         self.w = nn.Parameter(self.num_chars, self.hiddendim)
         self.wh = nn.Parameter(self.hiddendim, self.hiddendim)
@@ -250,12 +249,12 @@ class LanguageIDModel(object):
         """
         "*** YOUR CODE HERE ***"
         h = nn.Linear(xs[0], self.w)
-        z = h
+        h_temp = h
         
         for i, x in enumerate(xs[1:]):
-            z = nn.Add(nn.Linear(x, self.w), nn.Linear(z, self.wh))
+            h_temp = nn.Add(nn.Linear(x, self.w), nn.Linear(h_temp, self.wh))
 
-        return nn.Linear(z, self.wf)
+        return nn.Linear(h_temp, self.wf)
 
     def get_loss(self, xs, y):
         """
@@ -280,18 +279,12 @@ class LanguageIDModel(object):
         """
         "*** YOUR CODE HERE ***"
         while True:
-
-            #print(nn.Constant(dataset.x), nn.Constant(dataset.y))
-
-            for x, y in dataset.iterate_once(self.batch_size):
-                loss = self.get_loss(x,y)
+            for i, j in dataset.iterate_once(self.batch_size):
+                loss = self.get_loss(i, j)
                 grad = nn.gradients(loss, [self.w, self.wh, self.wf])
-
-                #print(grad[0], grad[1], grad[2])
                 self.w.update(grad[0], -0.005)
                 self.wh.update(grad[1], -0.005)
                 self.wf.update(grad[2], -0.005)
 
-            print(dataset.get_validation_accuracy())
             if dataset.get_validation_accuracy() >= 0.86:
                 return
